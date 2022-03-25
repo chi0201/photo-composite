@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>鍾老師榮退紀念照</title>
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"></script>
+
+  <style>
+    button {
+      padding: 5px 30px 5px 30px;
+      font-size: 30px;
+      margin: 5px 0px;
+    }
+
+    body {
+      font-family: '微軟正黑體';
+      font-size: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <label>載入你的相片：
+    <input name="inputImg" type="file" id="imgInp" accept="image/gif, image/jpeg, image/png" style='font-size: 30px;'
+      onchange="readURL(this)">
+  </label>
+  <br>
+  <table style="text-align: center;">
+    <tr>
+      <td>
+        <img src="0113_1.PNG" width="150px">
+      </td>
+      <td>
+        <img src="0113_2.PNG" width="150px">
+      </td>
+      <td>
+        <img src="0113_3.PNG" width="150px">
+      </td>
+      <td>
+        <img src="0113_4.PNG" width="150px">
+      </td>
+      <td>
+        <img src="0113_5.PNG" width="150px">
+      </td>
+      <td>
+        <img src="0113_6.PNG" width="150px">
+      </td>
+      <td>
+        <img src="0113_7.PNG" width="150px">
+      </td>
+      <td>
+        <img src="0113_8.PNG" width="150px">
+      </td>
+      <td>
+        <img src="0113_9.PNG" width="150px">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button onclick='showframe("0113_1.png")'>一</button>
+      </td>
+      <td>
+        <button onclick='showframe("0113_2.png")'>二</button>
+      </td>
+      <td>
+        <button onclick='showframe("0113_3.png")'>三</button>
+      </td>
+      <td>
+        <button onclick='showframe("0113_4.png")'>四</button>
+      </td>
+      <td>
+        <button onclick='showframe("0113_5.png")'>五</button>
+      </td>
+      <td>
+        <button onclick='showframe("0113_6.png")'>六</button>
+      </td>
+      <td>
+        <button onclick='showframe("0113_7.png")'>七</button>
+      </td>
+      <td>
+        <button onclick='showframe("0113_8.png")'>八</button>
+      </td>
+      <td>
+        <button onclick='showframe("0113_9.png")'>九</button>
+      </td>
+    </tr>
+  </table>
+
+  <p style="font-size: 30px;"><label>寬：<input type="number" id='picW' onchange="
+    imageObj2Pos.w=parseInt($(this).val());
+    if ( $('#scale')[0].checked ) {
+      $('#picH').val( $('#picW').val() * imageObj2Pos.scale ) ;
+      imageObj2Pos.h=parseInt($('#picH').val());
+    } // if
+    repaint(imageObj2Pos.x,imageObj2Pos.y);  
+  " style="font-size: 30px;"> px </label>
+    <br>
+    <label>高：<input type="number" id='picH' onchange="
+    imageObj2Pos.h=parseInt($(this).val());
+    repaint(imageObj2Pos.x,imageObj2Pos.y);  
+  " style="font-size: 30px;" disabled='true'> px </label>
+    <br>
+    <label>等比例<input type="checkbox" id="scale" onchange="
+    $('#picH')[0].disabled=$(this)[0].checked;
+    if ( $(this)[0].checked ) {
+      $('#picH').val( $('#picW').val() * imageObj2Pos.scale ) ;
+      imageObj2Pos.h=parseInt($('#picH').val());
+      repaint(imageObj2Pos.x,imageObj2Pos.y); 
+    } // if
+     
+    " style="width: 28px;height: 28px;" checked='true'></label>
+
+    <button onclick='
+      imageObj2Pos.w = imageObj2Pos.w + 100 ;
+      $("#picW").val( imageObj2Pos.w ) ;
+      imageObj2Pos.h = imageObj2Pos.h + 100 * imageObj2Pos.scale ;
+      $("#picH").val( imageObj2Pos.h ) ;
+      imageObj2Pos.x = canvas.width / 2 - imageObj2Pos.w / 2 ;
+      imageObj2Pos.y = canvas.height / 2 - imageObj2Pos.h / 2 ;
+      repaint(imageObj2Pos.x,imageObj2Pos.y); 
+    '>+</button>
+
+    <button onclick='
+      if ( imageObj2Pos.w > 100 & imageObj2Pos.h > 100) { 
+        imageObj2Pos.w= imageObj2Pos.w - 100 ;
+        $("#picW").val( imageObj2Pos.w ) ;
+        imageObj2Pos.h = imageObj2Pos.h - 100 * imageObj2Pos.scale ;
+        $("#picH").val( imageObj2Pos.h ) ;
+      } // if
+      imageObj2Pos.x = canvas.width / 2 - imageObj2Pos.w / 2 ;
+      imageObj2Pos.y = canvas.height / 2 - imageObj2Pos.h / 2 ;
+      repaint(imageObj2Pos.x,imageObj2Pos.y); 
+      '>-</button>
+  </p>
+  <p>
+    最長邊長度：<input type="range" min="1" max="1920" value="800" id="maxRange" style="width: 100%;" onchange="$('#maxRangeText').val($(this).val()); changeMax();">
+    <input type="number" min="1" max="1920" value="800" id="maxRangeText" style="font-size: 30px;" onchange="$('#maxRange').val($(this).val())"> px
+  </p>
+  <p><button onclick='
+      imageObj2Pos.x = canvas.width / 2 - imageObj2Pos.w / 2 ;
+      imageObj2Pos.y = canvas.height / 2 - imageObj2Pos.h / 2 ;
+      repaint(imageObj2Pos.x,imageObj2Pos.y); 
+    '>圖片置中</button> 
+    <label>
+      可以拖動你的圖片，放到適合的位置，按下載就可以儲存圖片了
+    </label>
+  </p>
+  <button onclick="download()">下載</button>
+  <br>
+
+  <canvas id="myCanvas"></canvas>
+  <script>
+    var canvas = document.getElementById('myCanvas');
+    var context = canvas.getContext('2d');
+
+    function getPosition(mouseEvent, element) {
+      var x, y;
+      if (mouseEvent.pageX != undefined && mouseEvent.pageY != undefined) {
+        x = mouseEvent.pageX;
+        y = mouseEvent.pageY;
+      } else {
+        x = mouseEvent.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        y = mouseEvent.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+      }
+
+      x = x - element.offsetLeft;
+      return { x: x, y: y - element.offsetTop };
+    }
+
+    
+    var allFrame = { 
+      '0113_1.png': new Image(),
+      '0113_2.png': new Image(),
+      '0113_3.png': new Image(),
+      '0113_4.png': new Image(),
+      '0113_5.png': new Image(),
+      '0113_6.png': new Image(),
+      '0113_7.png': new Image(),
+      '0113_8.png': new Image(),
+      '0113_9.png': new Image(),
+      init : function() {
+        // 或是 'fram01' : new Image(),
+        // this['fram01'].src = '0113_1.png'
+        // or this.fram01.src = '0113_1.png';
+        // 上面 '0113_1.png': new Image(),
+        // this['0113_1.png'].src = '0113_1.png'
+        // 不過就不能 this.0113_1.png.src = '0113_1.png'
+        // 因為多了 數字開頭的變數 .png 這兩個
+        this['0113_1.png'].src = '0113_1.png';
+        this['0113_2.png'].src = '0113_2.png';
+        this['0113_3.png'].src = '0113_3.png';
+        this['0113_4.png'].src = '0113_4.png';
+        this['0113_5.png'].src = '0113_5.png';
+        this['0113_6.png'].src = '0113_6.png';
+        this['0113_7.png'].src = '0113_7.png';
+        this['0113_8.png'].src = '0113_8.png';
+        this['0113_9.png'].src = '0113_9.png';
+
+        this[this['0113_1.png'].src] = '0113_1.png';
+        this[this['0113_2.png'].src] = '0113_2.png';
+        this[this['0113_3.png'].src] = '0113_3.png';
+        this[this['0113_4.png'].src] = '0113_4.png';
+        this[this['0113_5.png'].src] = '0113_5.png';
+        this[this['0113_6.png'].src] = '0113_6.png';
+        this[this['0113_7.png'].src] = '0113_7.png';
+        this[this['0113_8.png'].src] = '0113_8.png';
+        this[this['0113_9.png'].src] = '0113_9.png';
+      },
+    }
+
+    allFrame.init() ; // call 初始化
+
+    // var frame = new Image();
+    // frame.src = "0113_1.png";
+    var imageObj1 = allFrame["0113_1.png"];
+    var imageObj2;
+    var imageObj2Pos = { x: 0, y: 0, w: 0, h: 0, subX: 0, subY: 0, scale: 1 };
+
+    imageObj1.onload = function () {
+      canvas.width = 800;
+      canvas.height = canvas.width / (imageObj1.width / imageObj1.height);
+      imageObj2 = new Image();
+      imageObj2.src = "./twtw.png";
+      imageObj2.onload = function () {
+        imageObj2Pos.x = 0;
+        imageObj2Pos.y = 0;
+        imageObj2Pos.w = imageObj2.width;
+        imageObj2Pos.h = imageObj2.height;
+        imageObj2Pos.scale = imageObj2.height / imageObj2.width;
+        $('#picW').val(imageObj2.width);
+        $('#picH').val(imageObj2.height);
+        repaint(0, 0);
+      };
+    };
+
+    function changeMax() {
+      showframe(allFrame[imageObj1.src]);
+    }
+    function showframe(filename) {
+      imageObj1 = allFrame[filename];
+      wh = imageObj1.width / imageObj1.height ; // 寬高比
+      if ( wh > 1 ) { // 寬比較長
+        canvas.width = $('#maxRange').val();
+        canvas.height = canvas.width / wh;
+      } // if
+      else {
+        canvas.height = $('#maxRange').val();
+        canvas.width = canvas.height * wh;
+      } // else
+      //var temp = './' + filename;
+      // frame.src = temp;
+      // imageObj1 = frame;
+      // if (filename == '0113_4.png' || filename == '0113_5.png' || filename == '0113_6.png') {
+      //   if (filename == '0113_4.png' || filename == '0113_6.png') { // 1440*1920
+      //     canvas.width = 800;
+      //     canvas.height = 600;
+      //   } // if
+      //   else {   // 1080*1920
+      //     canvas.width = 800;
+      //     canvas.height = 1421;
+      //   } // else
+      // } // if
+      // else if (filename == '0113_1.png' || filename == '0113_2.png' || filename == '0113_3.png'
+      //         || filename == '0113_7.png' || filename == '0113_8.png' || filename == '0113_9.png') {
+      //   if (filename == '0113_1.png' || filename == '0113_2.png' || filename == '0113_8.png') { //1920 * 1080
+      //     canvas.width = 800;
+      //     canvas.height = 450;
+      //   } // if
+      //   else {   // 1920 * 1440
+      //     canvas.width = 800;
+      //     canvas.height = 600;
+      //   } // else
+      // } // else if
+
+      repaint(imageObj2Pos.x, imageObj2Pos.y);
+    } // showframe
+
+
+    function repaint(x, y) {
+      // clear canvas
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = '#ffffff' ;
+      context.fillRect(0,0,canvas.width,canvas.height);
+      context.drawImage(imageObj2, x, y, imageObj2Pos.w, imageObj2Pos.h);
+      var width = 800;
+      var height = 600;
+      // if (imageObj1.src.indexOf("0113_4.png") != -1 || imageObj1.src.indexOf("0113_6.png") != -1) { // 1440*1920
+      //   width = 800;
+      //   height = 600;
+      // } // if
+      // else if (imageObj1.src.indexOf("0113_5.png") != -1) {   // 1080*1920
+      //   width = 800;
+      //   height = 1421;
+      // } // else
+      // else if (imageObj1.src.indexOf("0113_1.png") != -1 || imageObj1.src.indexOf("0113_2.png") != -1 || imageObj1.src.indexOf("0113_8.png") != -1) { //1920 * 1080
+      //   width = 800;
+      //   height = 450;
+      // } // if
+      // else if (imageObj1.src.indexOf("0113_3.png") != -1 || imageObj1.src.indexOf("0113_7.png") != -1 || imageObj1.src.indexOf("0113_9.png") != -1) {   // 1920 * 1440
+      //   width = 800;
+      //   height = 600;
+      // } // else
+
+      var wh = imageObj1.width / imageObj1.height ; // 寬高比
+      if ( wh > 1 ) { // 寬比較長
+        width = $('#maxRange').val();
+        height = canvas.width / wh;
+      } // if
+      else {
+        height = $('#maxRange').val();
+        width = canvas.height * wh;
+      } // else
+
+      context.drawImage(imageObj1, 0, 0, width, height);
+      imageObj2Pos.x = x;
+      imageObj2Pos.y = y;
+    } // repaint
+
+    var isMousePress = false;
+    $(document).ready(function () {
+      $("#myCanvas").mousedown(function (mouseEvent) {
+        var position = getPosition(mouseEvent, canvas);
+        if (position.x >= imageObj2Pos.x && position.x <= imageObj2Pos.x + imageObj2Pos.w &&
+          position.y >= imageObj2Pos.y && position.y <= imageObj2Pos.y + imageObj2Pos.h) {
+          isMousePress = true;
+          imageObj2Pos.subX = position.x - imageObj2Pos.x;
+          imageObj2Pos.subY = position.y - imageObj2Pos.y;
+        } // if
+      });
+
+
+      $("#myCanvas").mousemove(function (mouseEvent) {
+        var position = getPosition(mouseEvent, canvas);
+        if (isMousePress)
+          repaint(position.x - imageObj2Pos.subX, position.y - imageObj2Pos.subY);
+      });
+
+      $("#myCanvas").mouseup(function (mouseEvent) {
+        isMousePress = false;
+      });
+
+      document.getElementById('myCanvas').addEventListener('touchstart', function (event) {
+        // event.preventDefault();
+        var position = getPosition(event.touches[0], canvas);
+        if (position.x >= imageObj2Pos.x && position.x <= imageObj2Pos.x + imageObj2Pos.w &&
+          position.y >= imageObj2Pos.y && position.y <= imageObj2Pos.y + imageObj2Pos.h) {
+          isMousePress = true;
+          imageObj2Pos.subX = position.x - imageObj2Pos.x;
+          imageObj2Pos.subY = position.y - imageObj2Pos.y;
+        } // if
+        return event;
+      }, false);
+
+      document.getElementById('myCanvas').addEventListener('touchmove', function (event) {
+
+        var position = getPosition(event.touches[0], canvas);
+        if (isMousePress) {
+          repaint(position.x - imageObj2Pos.subX, position.y - imageObj2Pos.subY);
+          event.preventDefault();
+        } // if
+        return event;
+      }, false);
+
+      document.getElementById('myCanvas').addEventListener('touchend', function (event) {
+        //event.preventDefault();
+        isMousePress = false;
+        return event;
+      }, false);
+
+
+    });
+
+
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          imageObj2 = new Image();
+          imageObj2.src = e.target.result;
+          imageObj2.onload = function () {
+            imageObj2Pos.x = 0;
+            imageObj2Pos.y = 0;
+            imageObj2Pos.w = imageObj2.width;
+            imageObj2Pos.h = imageObj2.height;
+            imageObj2Pos.scale = imageObj2.height / imageObj2.width;
+            $('#picW').val(imageObj2.width);
+            $('#picH').val(imageObj2.height);
+            repaint(0, 0);
+          };
+        }
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    var download = function () {
+      var link = document.createElement('a');
+      link.download = '照片.png';
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+  </script>
+</body>
+
+</html>
